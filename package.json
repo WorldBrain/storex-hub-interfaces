@@ -1,6 +1,6 @@
 {
   "name": "@worldbrain/storex-hub-interfaces",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Type definitions for interfaces used to interact with Storex Hub",
   "scripts": {
     "start": "ts-node ts/main.ts",
