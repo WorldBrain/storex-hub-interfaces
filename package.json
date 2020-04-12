@@ -1,0 +1,22 @@
+{
+  "name": "@worldbrain/storex-hub-interfaces",
+  "version": "0.1.0",
+  "description": "Type definitions for interfaces used to interact with Storex Hub",
+  "scripts": {
+    "start": "ts-node ts/main.ts",
+    "prepare": "tsc",
+    "prepare:watch": "npm run prepare -- -w",
+    "test": "mocha --require ts-node/register \"ts/**/*.test.ts\"",
+    "test:watch": "mocha -r source-map-support/register -r ts-node/register \"ts/**/*.test.ts\" --watch --watch-extensions ts",
+    "test:coverage": "rm -rf lib ; yarn prepare && nyc --reporter=html --reporter=text mocha 'lib/**/*.test.js'"
+  },
+  "keywords": [],
+  "author": "Vincent den Boer",
+  "dependencies": {},
+  "devDependencies": {
+    "@worldbrain/storex": "0.4.1",
+    "@worldbrain/storex-middleware-change-watcher": "^0.1.1",
+    "typescript": "^3.8.0",
+    "ts-node": "^8.8.1"
+  }
+}
