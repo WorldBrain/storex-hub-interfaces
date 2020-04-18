@@ -8,7 +8,7 @@ export interface StorexHubApi_v0 {
     // unidentifyApp() : Promise<void>
     destroySession(): Promise<void>
 
-    executeOperation(options: { operation: any[] }): Promise<{ result: any }>
+    executeOperation(options: ExecuteOperationOptions_v0): Promise<ExecuteOperationResult_v0>
 
     executeRemoteOperation(options: ExecuteRemoteOperationOptions_v0): Promise<ExecuteRemoteOperationResult_v0>
 
@@ -33,8 +33,9 @@ export interface StorexHubApi_v0 {
     // getSecret() : Promise<{}>
     // deleteSecret() : Promise<{}>
 
-    // storeApplicationConfig() : Promise<{}>
-    // getApplicationConfig() : Promise<{}>
+    setAppSettings(options: SetAppSettingsOptions_v0): Promise<SetAppSettingsResult_v0>
+    getAppSettings(options: GetAppSettingsOptions_v0): Promise<GetAppSettingsResult_v0>
+    deleteAppSettings(options: DeleteAppSettingsOptions_v0): Promise<DeleteAppSettingsResult_v0>
 }
 
 export interface RegisterAppOptions_v0 {
@@ -58,6 +59,13 @@ export type GetSessionInfoResult_v0 = {
     status: 'success',
     appIdentifier?: string
 }
+
+export interface ExecuteOperationOptions_v0 {
+    operation: any[]
+}
+export type ExecuteOperationResult_v0 =
+    { status: 'success', result: any } |
+    { status: 'no-schema-found' }
 
 export interface ExecuteRemoteOperationOptions_v0 {
     app: string
@@ -109,6 +117,34 @@ export enum UpdateSchemaError_v0 {
     SCHEMA_NOT_ALLOWED = 3,
 }
 
+export type AppSettingValue = string | number | boolean | null
+
+export interface GetAppSettingsOptions_v0 {
+    keys: string[] | 'all'
+}
+
+export type GetAppSettingsResult_v0 = {
+    status: 'success'
+    settings: { [key: string]: AppSettingValue }
+} | {
+    status: 'not-identified'
+}
+
+export interface SetAppSettingsOptions_v0 {
+    updates: { [key: string]: AppSettingValue }
+}
+
+export type SetAppSettingsResult_v0 = { status: 'success' } | { status: 'not-identified' }
+
+export interface DeleteAppSettingsOptions_v0 {
+    keys: string[] | 'all'
+}
+
+export type DeleteAppSettingsResult_v0 =
+    { status: 'success' } |
+    { status: 'not-identified' } |
+    { status: 'non-existing-keys', keys: string[] }
+
 export type MethodDescription = SyncMethodDescription
 export interface SyncMethodDescription {
     path: string
@@ -144,5 +180,14 @@ export const STOREX_HUB_API_v0: { [MethodName in keyof StorexHubApi_v0]: MethodD
     },
     emitEvent: {
         path: '/event/emit'
+    },
+    setAppSettings: {
+        path: '/app/settings/set'
+    },
+    getAppSettings: {
+        path: '/app/settings/get'
+    },
+    deleteAppSettings: {
+        path: '/app/settings/delete'
     }
 }
