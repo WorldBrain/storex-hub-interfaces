@@ -1,4 +1,4 @@
-import { StorexHubApi_v0 } from "./api";
+import { StorexHubApi_v0, StorexHubCallbacks_v0 } from "./api";
 
 export interface PluginInfo {
     identifier: string
@@ -15,4 +15,4 @@ export interface PluginInterface {
     stop(): Promise<void>
 }
 
-export type PluginEntryFunction = (input: { api: StorexHubApi_v0 }) => Promise<PluginInterface>
+export type PluginEntryFunction = (input: { getApi: (options?: { callbacks?: StorexHubCallbacks_v0 }) => Promise<StorexHubApi_v0> }) => Promise<PluginInterface>

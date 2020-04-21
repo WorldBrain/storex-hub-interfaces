@@ -1,5 +1,6 @@
 import { AppSchema } from '../apps';
 import * as common from './common';
+import { PluginInfo } from '../plugins';
 
 export interface StorexHubApi_v0 {
     registerApp(options: RegisterAppOptions_v0): Promise<RegisterAppResult_v0>
@@ -36,6 +37,10 @@ export interface StorexHubApi_v0 {
     setAppSettings(options: SetAppSettingsOptions_v0): Promise<SetAppSettingsResult_v0>
     getAppSettings(options: GetAppSettingsOptions_v0): Promise<GetAppSettingsResult_v0>
     deleteAppSettings(options: DeleteAppSettingsOptions_v0): Promise<DeleteAppSettingsResult_v0>
+
+    inspectPlugin(options: InspectPluginOptions_v0): Promise<InspectPluginResult_v0>
+    installPlugin(options: InstallPluginOptions_v0): Promise<InstallPluginResult_v0>
+    removePlugin(options: RemovePluginOptions_v0): Promise<RemovePluginResult_v0>
 }
 
 export interface RegisterAppOptions_v0 {
@@ -120,7 +125,8 @@ export enum UpdateSchemaError_v0 {
 export type AppSettingValue = string | number | boolean | null
 
 export interface GetAppSettingsOptions_v0 {
-    keys: string[] | 'all'
+    keys: string[] | 'all',
+    app?: string
 }
 
 export type GetAppSettingsResult_v0 = {
@@ -132,18 +138,55 @@ export type GetAppSettingsResult_v0 = {
 
 export interface SetAppSettingsOptions_v0 {
     updates: { [key: string]: AppSettingValue }
+    app?: string
 }
 
 export type SetAppSettingsResult_v0 = { status: 'success' } | { status: 'not-identified' }
 
 export interface DeleteAppSettingsOptions_v0 {
     keys: string[] | 'all'
+    app?: string
 }
 
 export type DeleteAppSettingsResult_v0 =
     { status: 'success' } |
     { status: 'not-identified' } |
     { status: 'non-existing-keys', keys: string[] }
+
+export interface InspectPluginOptions_v0 {
+    location: string
+}
+export type InspectPluginResult_v0 =
+    { status: 'success', pluginInfo: PluginInfo } |
+    { status: 'missing-permission' } |
+    InspectPluginError_v0
+
+export type InspectPluginError_v0 =
+    { status: 'not-found', location: string } |
+    { status: 'could-not-read', location: string } |
+    { status: 'invalid-json' } |
+    { status: 'validation-failed' }
+
+export interface InstallPluginOptions_v0 {
+    location: string
+}
+export type InstallPluginResult_v0 =
+    { status: 'success' } |
+    { status: 'missing-permission' } |
+    { status: 'already-installed' } |
+    { status: 'installed-but-errored', error: PluginLoadError_v0 } |
+    InspectPluginError_v0
+
+export type PluginLoadError_v0 =
+    { status: 'plugin-require-failed' } |
+    { status: 'missing-entry-function', entryFunction: string } |
+    { status: 'entry-function-failed' } |
+    { status: 'start-failed' }
+
+export interface RemovePluginOptions_v0 {
+    identifier: string
+}
+export type RemovePluginResult_v0 = { status: 'success' } | { status: 'missing-permission' }
 
 export type MethodDescription = SyncMethodDescription
 export interface SyncMethodDescription {
@@ -189,5 +232,14 @@ export const STOREX_HUB_API_v0: { [MethodName in keyof StorexHubApi_v0]: MethodD
     },
     deleteAppSettings: {
         path: '/app/settings/delete'
-    }
+    },
+    inspectPlugin: {
+        path: '/plugins/inspect'
+    },
+    installPlugin: {
+        path: '/plugins/inspect'
+    },
+    removePlugin: {
+        path: '/plugins/remove'
+    },
 }
