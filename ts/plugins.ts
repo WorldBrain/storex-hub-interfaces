@@ -2,9 +2,10 @@ import { StorexHubApi_v0, StorexHubCallbacks_v0 } from "./api";
 
 export interface PluginInfo {
     identifier: string
+    name: string
     version: string
     description: string
-    apps: Array<{ name: string, description?: string }>
+    apps?: Array<{ name: string, description?: string }>
     siteUrl: string
     mainPath: string
     entryFunction: string

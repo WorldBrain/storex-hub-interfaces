@@ -1,6 +1,10 @@
 import { AppSchema } from '../apps';
 import * as common from './common';
 import { PluginInfo } from '../plugins';
+import { SettingsDescription } from '../settings';
+
+export type NotIdentifiedError = 'not-identified'
+export type AppNotFoundError = 'app-not-found'
 
 export interface StorexHubApi_v0 {
     registerApp(options: RegisterAppOptions_v0): Promise<RegisterAppResult_v0>
@@ -34,10 +38,13 @@ export interface StorexHubApi_v0 {
     // getSecret() : Promise<{}>
     // deleteSecret() : Promise<{}>
 
+    describeAppSettings(options: DescribeAppSettingsOptions_v0): Promise<DescribeAppSettingsResult_v0>
+    getAppSettingsDescription(options: GetAppSettingsDescriptionOptions_v0): Promise<GetAppSettingsDescriptionResult_v0>
     setAppSettings(options: SetAppSettingsOptions_v0): Promise<SetAppSettingsResult_v0>
     getAppSettings(options: GetAppSettingsOptions_v0): Promise<GetAppSettingsResult_v0>
     deleteAppSettings(options: DeleteAppSettingsOptions_v0): Promise<DeleteAppSettingsResult_v0>
 
+    listPlugins(): Promise<ListPluginsResult_v0>
     inspectPlugin(options: InspectPluginOptions_v0): Promise<InspectPluginResult_v0>
     installPlugin(options: InstallPluginOptions_v0): Promise<InstallPluginResult_v0>
     removePlugin(options: RemovePluginOptions_v0): Promise<RemovePluginResult_v0>
@@ -78,8 +85,8 @@ export interface ExecuteRemoteOperationOptions_v0 {
 }
 export type ExecuteRemoteOperationResult_v0 =
     { status: 'success', result: any } |
-    { status: 'not-identified' } |
-    { status: 'app-not-found' } |
+    { status: NotIdentifiedError } |
+    { status: AppNotFoundError } |
     { status: 'app-not-supported' }
 
 export interface SubscribeToEventOptions_v0 {
@@ -122,6 +129,21 @@ export enum UpdateSchemaError_v0 {
     SCHEMA_NOT_ALLOWED = 3,
 }
 
+export interface DescribeAppSettingsOptions_v0 {
+    description: SettingsDescription
+    app?: string
+}
+
+export type DescribeAppSettingsResult_v0 = { status: 'success' | NotIdentifiedError | 'app-not-found' | 'has-no-description' }
+
+export interface GetAppSettingsDescriptionOptions_v0 {
+    app?: string
+}
+
+export type GetAppSettingsDescriptionResult_v0 =
+    { status: 'success', description: SettingsDescription } |
+    { status: NotIdentifiedError | 'app-not-found' | 'has-no-description' }
+
 export type AppSettingValue = string | number | boolean | null
 
 export interface GetAppSettingsOptions_v0 {
@@ -133,7 +155,7 @@ export type GetAppSettingsResult_v0 = {
     status: 'success'
     settings: { [key: string]: AppSettingValue }
 } | {
-    status: 'not-identified'
+    status: NotIdentifiedError
 }
 
 export interface SetAppSettingsOptions_v0 {
@@ -141,7 +163,7 @@ export interface SetAppSettingsOptions_v0 {
     app?: string
 }
 
-export type SetAppSettingsResult_v0 = { status: 'success' } | { status: 'not-identified' }
+export type SetAppSettingsResult_v0 = { status: 'success' } | { status: NotIdentifiedError }
 
 export interface DeleteAppSettingsOptions_v0 {
     keys: string[] | 'all'
@@ -150,12 +172,24 @@ export interface DeleteAppSettingsOptions_v0 {
 
 export type DeleteAppSettingsResult_v0 =
     { status: 'success' } |
-    { status: 'not-identified' } |
+    { status: NotIdentifiedError } |
     { status: 'non-existing-keys', keys: string[] }
 
-export interface InspectPluginOptions_v0 {
-    location: string
+export type ListPluginsResult_v0 = {
+    status: 'success'
+    plugins: PluginInfo[]
+    state: {
+        [identifier: string]: {
+            status: 'available' | 'enabled' | 'disabled'
+            update?: 'pending'
+        }
+    }
 }
+
+export type InspectPluginOptions_v0 =
+    { location: string } |
+    { identifier: string }
+
 export type InspectPluginResult_v0 =
     { status: 'success', pluginInfo: PluginInfo } |
     { status: 'missing-permission' } |
@@ -163,13 +197,15 @@ export type InspectPluginResult_v0 =
 
 export type InspectPluginError_v0 =
     { status: 'not-found', location: string } |
+    { status: 'not-found', identifier: string } |
     { status: 'could-not-read', location: string } |
     { status: 'invalid-json' } |
     { status: 'validation-failed' }
 
-export interface InstallPluginOptions_v0 {
-    location: string
-}
+export type InstallPluginOptions_v0 =
+    { location: string } |
+    { identifier: string }
+
 export type InstallPluginResult_v0 =
     { status: 'success' } |
     { status: 'missing-permission' } |
@@ -224,6 +260,12 @@ export const STOREX_HUB_API_v0: { [MethodName in keyof StorexHubApi_v0]: MethodD
     emitEvent: {
         path: '/event/emit'
     },
+    describeAppSettings: {
+        path: '/app/settings/describe'
+    },
+    getAppSettingsDescription: {
+        path: '/app/settings/description'
+    },
     setAppSettings: {
         path: '/app/settings/set'
     },
@@ -232,6 +274,9 @@ export const STOREX_HUB_API_v0: { [MethodName in keyof StorexHubApi_v0]: MethodD
     },
     deleteAppSettings: {
         path: '/app/settings/delete'
+    },
+    listPlugins: {
+        path: '/plugins/list'
     },
     inspectPlugin: {
         path: '/plugins/inspect'
