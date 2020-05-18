@@ -5,6 +5,7 @@ export interface StorexHubCallbacks_v0 {
     handleEvent?(options: HandleEventOptions_v0): Promise<HandleEventResult_v0>
     handleSubscription?(options: HandleSubscriptionOptions_v0): Promise<HandleSubscriptionResult_v0>
     handleUnsubscription?(options: HandleUnsubscriptionOptions_v0): Promise<HandleUnubscriptionResult_v0>
+    handleRemoteCall?(options: HandleRemoteCallOptions_v0): Promise<HandleRemoteCallResult_v0>
 }
 export type AllStorexHubCallbacks_v0 = { [MethodName in keyof StorexHubCallbacks_v0]-?: StorexHubCallbacks_v0[MethodName] }
 
@@ -38,3 +39,10 @@ export interface HandleUnsubscriptionOptions_v0 {
 }
 
 export type HandleUnubscriptionResult_v0 = void
+
+export interface HandleRemoteCallOptions_v0 {
+    call: string
+    args: { [key: string]: any }
+}
+
+export type HandleRemoteCallResult_v0 = { status: 'success', result: any } | { status: 'internal-error', errorStatus: string, errorText: string }

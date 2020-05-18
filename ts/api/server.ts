@@ -16,6 +16,7 @@ export interface StorexHubApi_v0 {
     executeOperation(options: ExecuteOperationOptions_v0): Promise<ExecuteOperationResult_v0>
 
     executeRemoteOperation(options: ExecuteRemoteOperationOptions_v0): Promise<ExecuteRemoteOperationResult_v0>
+    executeRemoteCall(options: ExecuteRemoteCallOptions_v0): Promise<ExecuteRemoteCallResult_v0>
 
     subscribeToEvent(options: SubscribeToEventOptions_v0): Promise<SubscribeToEventResult_v0>
     unsubscribeFromEvent(options: UnsubscribeFromEventOptions_v0): Promise<UnsubscribeFromEventResult_v0>
@@ -89,6 +90,14 @@ export type ExecuteRemoteOperationResult_v0 =
     { status: AppNotFoundError } |
     { status: 'app-not-supported' }
 
+export interface ExecuteRemoteCallOptions_v0 {
+    app: string
+    call: string
+    args: { [key: string]: any }
+}
+
+export type ExecuteRemoteCallResult_v0 = { status: 'success', result: any } | { status: AppNotFoundError | NotIdentifiedError | 'call-not-found' | 'invalid-args' } | { status: 'internal-error', errorStatus: string, errorText: string }
+
 export interface SubscribeToEventOptions_v0 {
     request: SubscriptionRequest_v0
 }
@@ -100,7 +109,7 @@ export type SubscriptionRequest_v0 =
 
 export type SubscribeToEventResult_v0 =
     { status: 'unsupported-event' } |
-    { status: 'app-not-found' } |
+    { status: AppNotFoundError } |
     { status: 'app-not-supported' } |
     { status: 'success', subscriptionId: string }
 
@@ -250,6 +259,9 @@ export const STOREX_HUB_API_v0: { [MethodName in keyof StorexHubApi_v0]: MethodD
     },
     executeRemoteOperation: {
         path: '/remote/operation'
+    },
+    executeRemoteCall: {
+        path: '/remote/call'
     },
     subscribeToEvent: {
         path: '/remote/event/subscribe'
