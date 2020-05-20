@@ -45,4 +45,4 @@ export interface HandleRemoteCallOptions_v0 {
     args: { [key: string]: any }
 }
 
-export type HandleRemoteCallResult_v0 = { status: 'success', result: any } | { status: 'internal-error', errorStatus: string, errorText: string }
+export type HandleRemoteCallResult_v0 = { status: 'success', result: any } | { status: 'call-not-found' | 'invalid-args' } | { status: 'internal-error', errorStatus: string, errorText: string }
