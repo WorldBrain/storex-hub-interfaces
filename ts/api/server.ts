@@ -2,6 +2,7 @@ import { AppSchema } from '../apps';
 import * as common from './common';
 import { PluginInfo } from '../plugins';
 import { SettingsDescription } from '../settings';
+import { RecipeDefinition } from '../recipes';
 
 export type NotIdentifiedError = 'not-identified'
 export type AppNotFoundError = 'app-not-found'
@@ -49,6 +50,12 @@ export interface StorexHubApi_v0 {
     inspectPlugin(options: InspectPluginOptions_v0): Promise<InspectPluginResult_v0>
     installPlugin(options: InstallPluginOptions_v0): Promise<InstallPluginResult_v0>
     removePlugin(options: RemovePluginOptions_v0): Promise<RemovePluginResult_v0>
+
+    // listRecipes(options: ListRecipesOptions_v0): Promise<ListRecipesResult_v0>
+    // insectRecipe(options: InsectRecipeOptions_v0): Promise<InsectRecipeResult_v0>
+    createRecipe(options: CreateRecipeOptions_v0): Promise<CreateRecipeResult_v0>
+    // removeRecipe(options: RemoveRecipeOptions_v0): Promise<RemoveRecipeResult_v0>
+    // updateRecipe(options: UpdateRecipeOptions_v0): Promise<UpdateRecipeResult_v0>
 }
 
 export interface RegisterAppOptions_v0 {
@@ -105,13 +112,12 @@ export type SubscriptionRequest_v0 =
     common.AppAvailabilityChangedSubscriptionRequest_v0 |
     ({ app: string } & common.RemoteSubscriptionRequest_v0)
 
-
-
 export type SubscribeToEventResult_v0 =
-    { status: 'unsupported-event' } |
-    { status: AppNotFoundError } |
-    { status: 'app-not-supported' } |
-    { status: 'success', subscriptionId: string }
+    | { status: 'success', subscriptionId: string }
+    | { status: NotIdentifiedError }
+    | { status: 'unsupported-event' }
+    | { status: AppNotFoundError }
+    | { status: 'app-not-supported' }
 
 export interface UnsubscribeFromEventOptions_v0 {
     subscriptionId: string
@@ -233,6 +239,38 @@ export interface RemovePluginOptions_v0 {
 }
 export type RemovePluginResult_v0 = { status: 'success' } | { status: 'missing-permission' }
 
+// export interface ListRecipesOptions_v0 {
+
+// }
+
+// export type ListRecipesResult_v0 = { status: 'success'}
+
+// export interface InsectRecipeOptions_v0 {
+
+// }
+
+// export type InsectRecipeResult_v0 = { status: 'success'}
+
+export interface CreateRecipeOptions_v0 {
+    integrateExisting: boolean
+    recipe: RecipeDefinition
+}
+
+export type CreateRecipeResult_v0 = { status: 'success' }
+
+// export interface RemoveRecipeOptions_v0 {
+
+// }
+
+// export type RemoveRecipeResult_v0 = { status: 'success'}
+
+// export interface UpdateRecipeOptions_v0 {
+
+// }
+
+// export type UpdateRecipeResult_v0 = { status: 'success'}
+
+
 export type MethodDescription = SyncMethodDescription
 export interface SyncMethodDescription {
     path: string
@@ -299,4 +337,7 @@ export const STOREX_HUB_API_v0: { [MethodName in keyof StorexHubApi_v0]: MethodD
     removePlugin: {
         path: '/plugins/remove'
     },
+    createRecipe: {
+        path: '/recipes/create'
+    }
 }
