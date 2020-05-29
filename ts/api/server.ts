@@ -151,7 +151,7 @@ export interface GetAppSettingsDescriptionOptions_v0 {
 
 export type GetAppSettingsDescriptionResult_v0 =
     { status: 'success', description: SettingsDescription } |
-    { status: NotIdentifiedError | 'app-not-found' | 'has-no-description' }
+    { status: NotIdentifiedError | AppNotFoundError | 'has-no-description' }
 
 export type AppSettingValue = string | number | boolean | null
 
@@ -164,7 +164,7 @@ export type GetAppSettingsResult_v0 = {
     status: 'success'
     settings: { [key: string]: AppSettingValue }
 } | {
-    status: NotIdentifiedError
+    status: NotIdentifiedError | AppNotFoundError
 }
 
 export interface SetAppSettingsOptions_v0 {
@@ -172,7 +172,7 @@ export interface SetAppSettingsOptions_v0 {
     app?: string
 }
 
-export type SetAppSettingsResult_v0 = { status: 'success' } | { status: NotIdentifiedError }
+export type SetAppSettingsResult_v0 = { status: 'success' } | { status: NotIdentifiedError | AppNotFoundError }
 
 export interface DeleteAppSettingsOptions_v0 {
     keys: string[] | 'all'
@@ -181,7 +181,7 @@ export interface DeleteAppSettingsOptions_v0 {
 
 export type DeleteAppSettingsResult_v0 =
     { status: 'success' } |
-    { status: NotIdentifiedError } |
+    { status: NotIdentifiedError | AppNotFoundError } |
     { status: 'non-existing-keys', keys: string[] }
 
 export type ListPluginsResult_v0 = {
