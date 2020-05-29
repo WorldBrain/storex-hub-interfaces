@@ -1,8 +1,11 @@
 export interface RecipeDefinition {
     settings?: { keys: string[] | 'all' }
     select: RecipeDataSelection
-    process?: RecipeDataProcessor[]
-    execute: RecipeAction[]
+    on: {
+        add?: RecipeAction[],
+        change?: RecipeAction[],
+        remove?: RecipeAction[],
+    }
 }
 
 export interface RecipeDataSelection {
@@ -13,12 +16,12 @@ export interface RecipeDataSelection {
     where: { [key: string]: any }
 }
 
-export type RecipeDataProcessor = FindDataProcessor
-export interface RecipeDataProcessorBase {
-    placeholder: string
+export type RecipeAction = FindOperationAction | CallAction
+export interface RecipeActionBase {
+    placeholder?: string
 }
 
-export interface FindDataProcessor extends RecipeDataProcessorBase {
+export interface FindOperationAction extends RecipeActionBase {
     operation: 'findObject' | 'findObjects'
     app: string
     remote?: boolean
@@ -26,7 +29,7 @@ export interface FindDataProcessor extends RecipeDataProcessorBase {
     where: { [key: string]: any }
 }
 
-export interface RecipeAction {
+export interface CallAction extends RecipeActionBase {
     app: string
     call: string
     args: { [key: string]: any }
