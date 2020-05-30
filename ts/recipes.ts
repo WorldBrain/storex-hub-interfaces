@@ -3,7 +3,7 @@ export interface RecipeDefinition {
     select: RecipeDataSelection
     on: {
         add?: RecipeAction[],
-        change?: RecipeAction[],
+        modify?: RecipeAction[],
         remove?: RecipeAction[],
     }
 }
