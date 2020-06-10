@@ -77,6 +77,7 @@ export type IdentifyAppResult_v0 = { status: 'success' } |
 
 export type GetSessionInfoResult_v0 = {
     status: 'success',
+    instanceId: string,
     appIdentifier?: string
 }
 
