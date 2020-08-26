@@ -13,6 +13,7 @@ export interface RecipeDataSelection {
     app: string
     remote?: boolean
     collection: string
+    pk?: string | string[]
     where: { [key: string]: any }
 }
 
